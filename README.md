@@ -1,24 +1,23 @@
 
-````
 # 🌍 QUIZ DRAPEAUX
 
-![GitHub stars](https://img.shields.io/github/stars/PhilippeHim/quizz_drapeau?style=social)
-![GitHub repo size](https://img.shields.io/github/repo-size/PhilippeHim/quizz_drapeau)
+[![GitHub stars](https://img.shields.io/github/stars/PhilippeHim/quizz_drapeau?style=social)](https://github.com/PhilippeHim/quizz_drapeau)
+[![GitHub repo size](https://img.shields.io/github/repo-size/PhilippeHim/quizz_drapeau)](https://github.com/PhilippeHim/quizz_drapeau)
 ![Python version](https://img.shields.io/badge/Python-3.x-blue)
 ![Framework](https://img.shields.io/badge/Framework-Streamlit-red)
 
 ## 🎯 Aperçu du Projet
 
-Ce projet est une application de quiz interactive développée avec **Streamlit** en Python. Le but est de tester et d'améliorer vos connaissances en vexillologie (l'étude des drapeaux) en identifiant les drapeaux des pays du monde.
+Ce projet est une application de quiz interactive développée avec **Streamlit** en Python. Le but est de tester et d'améliorer vos connaissances en **vexillologie** (l'étude des drapeaux) en identifiant les drapeaux des pays du monde.
 
 Les drapeaux utilisés ont été scrapés depuis la page Wikipédia : [Galerie des drapeaux des pays du monde](https://fr.wikipedia.org/wiki/Galerie_des_drapeaux_des_pays_du_monde).
 
 ### ⚙️ Fonctionnalités
 
 * Affichage aléatoire d'un drapeau du monde.
-* Affichage du nom du pays (la réponse) en appuyant sur la touche `Entrée` (simulée via un bouton Streamlit).
+* Affichage du nom du pays (la réponse) en cliquant sur le bouton (simulant la touche `Entrée`).
 * Passage au drapeau suivant pour une nouvelle manche.
-* Interface utilisateur simple grâce à Streamlit.
+* Interface utilisateur simple et réactive grâce à Streamlit.
 
 ---
 

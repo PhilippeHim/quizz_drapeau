@@ -15,7 +15,7 @@ def charger_drapeaux_et_initialiser_session():
         for nom_fichier in os.listdir(DOSSIER_CIBLE):
             if nom_fichier.lower().endswith(('.svg', '.png', '.jpg', '.jpeg')):
                 chemin_complet = os.path.join(DOSSIER_CIBLE, nom_fichier)
-                nom_pays = os.path.splitext(nom_fichier)[0]
+                nom_pays = os.path.splitext(nom_fichier)[0]©
                 drapeaux_data.append({'chemin': chemin_complet, 'nom_pays': nom_pays})
         
         random.shuffle(drapeaux_data)
