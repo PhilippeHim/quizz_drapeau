@@ -7,3 +7,6 @@ __pycache__/
 .vscode/
 # Fichiers temporaires Streamlit
 .streamlit/
+
+# Fichiers spécifiques à macOS à ignorer
+.DS_Store
