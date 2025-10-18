@@ -87,7 +87,7 @@ quizz_drapeaux/
 ├── venv/                 # Environnement virtuel (ignoré par Git)
 ├── .gitignore            # Fichiers à ignorer (venv, .DS_Store, etc.)
 ├── quizz.py              # Le script principal de l'application Streamlit
-├── renommer.py           # Script (probablement utilisé) pour nettoyer et renommer les drapeaux
+├── renommer.py           # Script pour nettoyer et renommer les drapeaux en français
 ├── requirements.txt      # Liste des dépendances Python
 └── README.md             # Ce fichier
 ```
@@ -99,7 +99,7 @@ quizz_drapeaux/
 Ce projet nécessite les bibliothèques Python suivantes :
 
   * `streamlit` : Pour le développement rapide de l'application web.
-  * `Pillow` (ou `PIL`) : Souvent utilisé pour le traitement d'images (redimensionnement, etc.).
+  * `Pillow` (ou `PIL`) : Utilisé pour le traitement d'images (redimensionnement, etc.).
   * `os` / `random` : Pour la gestion des fichiers et la sélection aléatoire.
     *(Note : Assurez-vous que votre `requirements.txt` contient toutes les dépendances exactes).*
 
@@ -109,7 +109,7 @@ Ce projet nécessite les bibliothèques Python suivantes :
 
 1.  Lancez l'application comme indiqué ci-dessus.
 2.  Un drapeau s'affiche. Essayez de deviner le pays.
-3.  Cliquez sur le bouton **"Afficher la réponse / Changer de drapeau"** (ou le nom exact que vous avez donné à votre bouton) pour voir le nom du pays.
+3.  Cliquez sur le bouton **"Afficher la réponse"** pour voir le nom du pays.
 4.  Cliquez à nouveau pour passer au drapeau suivant \!
 
 -----
