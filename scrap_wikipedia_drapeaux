@@ -1,0 +1,118 @@
+import requests
+from bs4 import BeautifulSoup
+import os
+import re
+import time 
+
+# Constantes 
+URL_WIKIPEDIA = "https://fr.wikipedia.org/wiki/Galerie_des_drapeaux_des_pays_du_monde"
+BASE_URL = "https://fr.wikipedia.org"
+
+# User-Agent robuste pour simuler un navigateur
+HEADERS = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+}
+
+DOSSIER_CIBLE = "drapeaux"
+
+def telecharger_drapeaux_svg_final_v3(url_principale, dossier_cible):
+    """
+    Scrape avec prints à chaque étape critique pour le diagnostic.
+    """
+    
+    if not os.path.exists(dossier_cible):
+        os.makedirs(dossier_cible)
+        print(f"[SETUP] Dossier '{dossier_cible}' créé.")
+    
+    # --- ÉTAPE 1 : Récupérer les liens des pages de description des fichiers ---
+    print("\n--- DÉBOGAGE ÉTAPE 1 : ACCÈS À LA PAGE PRINCIPALE ---")
+    try:
+        response = requests.get(url_principale, headers=HEADERS)
+        response.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        print(f"[ERREUR FATALE] Échec de l'accès à la page principale: {e}")
+        return
+
+    soup = BeautifulSoup(response.text, 'html.parser')
+    
+    # SÉLECTEUR ROBUSTE pour la page principale (Contenu + Fichier:)
+    selector_main = '.mw-parser-output a[href^="/wiki/Fichier:"]'
+    file_page_links = soup.select(selector_main)
+    valid_file_page_links = [link for link in file_page_links if link.find('img')]
+    
+    if not valid_file_page_links:
+        print("❌ Échec : Aucun lien de page de fichier de drapeau trouvé. Vérifiez le sélecteur CSS.")
+        return
+
+    print(f"[INFO] {len(valid_file_page_links)} liens de pages de fichiers trouvés. Lancement du loop...")
+    print("-----------------------------------------------------------------")
+    
+    drapeaux_telecharges = 0
+    
+    # --- LOOP PAR DRAPEAU ---
+    for i, link in enumerate(valid_file_page_links):
+        file_page_path = link['href']
+        file_page_url = BASE_URL + file_page_path
+        
+        nom_fichier_brut = os.path.basename(file_page_path).replace('Fichier:', '')
+        nom_fichier = nom_fichier_brut if nom_fichier_brut.lower().endswith(('.svg', '.png', '.jpg')) else nom_fichier_brut + '.svg'
+        
+        # print(f"\n--- DRAPEAU [{i+1}/{len(valid_file_page_links)}] : {nom_fichier} ---") # Mettez en commentaire le print pour une exécution plus rapide
+        
+        try:
+            # Étape 2 : Visiter la page de description du fichier
+            file_response = requests.get(file_page_url, headers=HEADERS)
+            file_response.raise_for_status()
+            file_soup = BeautifulSoup(file_response.text, 'html.parser')
+            
+            # --- ÉTAPE 3 : Trouver le lien du fichier original (NOUVELLE CORRECTION) ---
+            # 1. Tenter l'ancien sélecteur "Afficher dans le navigateur" au cas où
+            selector_svg = 'a.cdx-docs-link[href*="upload.wikimedia.org"]'
+            svg_link_element = file_soup.select_one(selector_svg)
+            
+            # 2. Si le lien cdx-docs-link est manquant, chercher le lien 'fullMedia' (lien historique vers le fichier source)
+            if not svg_link_element:
+                selector_svg_alt = '.fullMedia a[href*="upload.wikimedia.org"]'
+                svg_link_element = file_soup.select_one(selector_svg_alt)
+            
+            if not svg_link_element:
+                print(f"[Sauter] ❌ Lien SVG non trouvé pour {nom_fichier} (Ni cdx-docs-link, ni fullMedia).")
+                continue
+            
+            svg_url = svg_link_element['href']
+            
+            # Nettoyer l'URL si elle contient le paramètre de téléchargement
+            if '?download' in svg_url:
+                svg_url = svg_url.split('?download')[0]
+                
+            # Vérifier que l'URL est complète si elle était relative (ne devrait pas être le cas ici, mais sécurité)
+            if svg_url.startswith('//'):
+                svg_url = 'https:' + svg_url
+                
+            # print(f"[DEBUG 3.2] Lien SVG/Upload trouvé: {svg_url}") # Décommenter si besoin
+            
+            chemin_fichier = os.path.join(dossier_cible, nom_fichier)
+            
+            # Étape 4 : Téléchargement du fichier
+            image_response = requests.get(svg_url, headers=HEADERS)
+            image_response.raise_for_status()
+            
+            with open(chemin_fichier, 'wb') as f:
+                f.write(image_response.content)
+            
+            drapeaux_telecharges += 1
+            print(f"[OK] Téléchargé ({i+1}/{len(valid_file_page_links)}) : {nom_fichier}")
+            
+            time.sleep(0.5) 
+            
+        except requests.exceptions.RequestException as e:
+            print(f"[ERREUR] Échec du traitement de {nom_fichier}: {e}")
+            time.sleep(1) 
+            
+    # --- FIN DU LOOP ---
+    print("\n-----------------------------------------")
+    print(f"✅ Terminé. **{drapeaux_telecharges}** fichiers SVG de haute résolution téléchargés dans le dossier '{dossier_cible}'.")
+    print("-----------------------------------------")
+
+# --- EXÉCUTION ---
+telecharger_drapeaux_svg_final_v3(URL_WIKIPEDIA, DOSSIER_CIBLE)
